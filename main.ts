@@ -1,8 +1,9 @@
 import { Server }  from './server/server'
+import { usersRouter } from './users/users.router'
 
 const server = new Server()
 
-server.bootstrap()
+server.bootstrap([usersRouter])
   .then(server=> {
     console.log(`Server is litening on ${server.application.address().port}`)
   }).catch(error => {

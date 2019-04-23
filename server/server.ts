@@ -1,4 +1,5 @@
 import * as restify from 'restify'
+import { Router } from '../common/router'
 import { environment } from '../common/environment'
 
 
@@ -6,12 +7,12 @@ export class Server {
 
   application!: restify.Server
 
-  bootstrap(): Promise<Server> {
-    return this.initRoutes()
+  bootstrap(routers : Router[] = []): Promise<Server> {
+    return this.initRoutes(routers)
       .then(() => this)
   }
 
-  initRoutes() : Promise<any>{
+  initRoutes(routers: Router[]) : Promise<any>{
     return new Promise((resolve, reject) => {
       try{
         this.application = restify.createServer({
@@ -20,17 +21,11 @@ export class Server {
         })
 
         this.application.use(restify.plugins.queryParser())
+        
         //routes
-        this.application.get('/hello', (req, resp, next) => {
-          resp.json({
-            message: 'Hello World!',
-            browser: req.userAgent(),
-            method: req.method,
-            url: req.href(),
-            path: req.path(),
-            query: req.query
-          })
-        })
+        for(let router of routers){
+          router.applyRoutes(this.application)
+        }
         
         this.application.listen(environment.server.port, () => {
           resolve(this.application)
