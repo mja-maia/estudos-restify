@@ -1,5 +1,6 @@
 import * as restify from 'restify'
 import * as mongoose from 'mongoose'
+import { mergePatchBodyParser } from './merge-patch.parser'
 import { Router } from '../common/router'
 import { environment } from '../common/environment'
 
@@ -27,6 +28,9 @@ export class Server {
         this.application.use(restify.plugins.queryParser())
         //parseia os atributos enviados via POST 
         this.application.use(restify.plugins.bodyParser())
+        //bodyParser customizado que foi criado para adicionar 
+        //o contentType nas requisicoes do tipo patch
+        this.application.use(mergePatchBodyParser)
         
         //routes
         for(let router of routers){
