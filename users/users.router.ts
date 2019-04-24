@@ -1,7 +1,6 @@
 import * as restify from 'restify'
 import { Router } from '../common/router'
 import { User } from './users.model'
-import { DocumentQuery } from 'mongoose';
 
 class UsersRouter extends Router {
   applyRoutes(application : restify.Server){
@@ -60,6 +59,18 @@ class UsersRouter extends Router {
             return next()
           }
           resp.send(404)
+          return next()
+        })
+    })
+
+    application.del('/users/:id', (req, resp, next) => {
+      User.remove({_id: req.params.id}).exec()
+        .then(({result}:any) => {
+          if(result.n){
+            resp.send(204)
+          }else{
+            resp.send(404)
+          }
           return next()
         })
     })
