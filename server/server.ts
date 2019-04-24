@@ -23,7 +23,10 @@ export class Server {
           version: '1.0.0'
         })
 
+        //parseia os atributos enviados via query string em atributos isolados
         this.application.use(restify.plugins.queryParser())
+        //parseia os atributos enviados via POST 
+        this.application.use(restify.plugins.bodyParser())
         
         //routes
         for(let router of routers){
