@@ -16,4 +16,17 @@ export abstract class Router extends EventEmitter{
       return next()
     }
   }
+
+  renderAll(resp: restify.Response, next: restify.Next){
+    return (documents: any[]) => {
+      if(documents){
+        documents.forEach(document => {
+          this.emit('beforeRender', document)
+        })
+        resp.json(documents)
+      }else{
+        resp.json([])
+      }
+    }
+  }
 }
