@@ -4,12 +4,22 @@ import * as restify from 'restify'
 import { NotFoundError } from "restify-errors";
 
 export abstract class ModelRouter<D extends mongoose.Document> extends Router {
+  
+  basePath: string
+  
   constructor(protected model: mongoose.Model<D>){
     super()
+    this.basePath = `/${model.collection.name}`
   }
 
   protected prepareOne(query: mongoose.DocumentQuery<D, D>): mongoose.DocumentQuery<D,D>{
     return query
+  }
+
+  envelope(document: any):any {
+    let resource = Object.assign({_links: {}}, document.toJSON())
+    resource._links.self = `${this.basePath}/${document._id}`
+    return resource
   }
 
   //valida se é um id invalido, caso seja retorna 404 e não um 500 como retornava antes
