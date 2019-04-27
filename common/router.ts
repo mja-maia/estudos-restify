@@ -9,6 +9,10 @@ export abstract class Router extends EventEmitter{
     return document
   }
 
+  envelopeAll(documents: any[], options: any = {}):any{
+    return documents
+  }
+
   render(resp: restify.Response, next: restify.Next){
     return document => {
       if(document){
@@ -21,16 +25,16 @@ export abstract class Router extends EventEmitter{
     }
   }
 
-  renderAll(resp: restify.Response, next: restify.Next){
+  renderAll(resp: restify.Response, next: restify.Next, options: any = {}){
     return (documents: any[]) => {
       if(documents){
         documents.forEach((document, index, array) => {
           array[index] = this.envelope(document)
           this.emit('beforeRender', document)
         })
-        resp.json(documents)
+        resp.json(this.envelopeAll(documents, options))
       }else{
-        resp.json([])
+        resp.json(this.envelopeAll([]))
       }
       return next()
     }
