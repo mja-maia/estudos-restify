@@ -8,6 +8,10 @@ export abstract class ModelRouter<D extends mongoose.Document> extends Router {
     super()
   }
 
+  protected prepareOne(query: mongoose.DocumentQuery<D, D>): mongoose.DocumentQuery<D,D>{
+    return query
+  }
+
   //valida se é um id invalido, caso seja retorna 404 e não um 500 como retornava antes
   validadeId = (req:restify.Request, resp: restify.Response, next) => {
     if(!mongoose.Types.ObjectId.isValid(req.params.id)){
@@ -24,7 +28,7 @@ export abstract class ModelRouter<D extends mongoose.Document> extends Router {
   }
 
   findById = (req:restify.Request, resp: restify.Response, next) => {
-    this.model.findById(req.params.id)
+    this.prepareOne(this.model.findById(req.params.id))
       .then(this.render(resp, next))
       .catch(next)
   }
